@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>python 进程间管道通信 | 一只羊的碎碎念</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="python,">
+  
+
+  <meta name="description" content="实现了两个 Linux 进程之间通过管道进行通讯的代码逻辑。分为 client.py 与 server.py 运行时需要先运行 server 再运行 client client.py import osimport timewrite_path = &quot;pipe.in&quot;read_path = &quot;pipe.out&quot;wf = os.open(write_path, os.O_SYNC | os.O_CR">
+<meta name="keywords" content="python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python 进程间管道通信">
+<meta property="og:url" content="https://www.holmeyoung.com/blog/python-process-fifo/index.html">
+<meta property="og:site_name" content="一只羊的碎碎念">
+<meta property="og:description" content="实现了两个 Linux 进程之间通过管道进行通讯的代码逻辑。分为 client.py 与 server.py 运行时需要先运行 server 再运行 client client.py import osimport timewrite_path = &quot;pipe.in&quot;read_path = &quot;pipe.out&quot;wf = os.open(write_path, os.O_SYNC | os.O_CR">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-10-06T07:36:56.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python 进程间管道通信">
+<meta name="twitter:description" content="实现了两个 Linux 进程之间通过管道进行通讯的代码逻辑。分为 client.py 与 server.py 运行时需要先运行 server 再运行 client client.py import osimport timewrite_path = &quot;pipe.in&quot;read_path = &quot;pipe.out&quot;wf = os.open(write_path, os.O_SYNC | os.O_CR">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+
+<link rel="alternate" href="/atom.xml" title="一只羊的碎碎念" type="application/atom+xml">
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-python-process-fifo" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">python 进程间管道通信</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.11.05</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>福尔摩小阳</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/python/">python</a>
+  </span>
+
+
+
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <p>实现了两个 <code>Linux</code> 进程之间通过管道进行通讯的代码逻辑。分为 <code>client.py</code> 与 <code>server.py</code> 运行时需要先运行 <code>server</code> 再运行 <code>client</code></p>
+<p><code>client.py</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">write_path = <span class="string">"pipe.in"</span></span><br><span class="line">read_path = <span class="string">"pipe.out"</span></span><br><span class="line"></span><br><span class="line">wf = os.open(write_path, os.O_SYNC | os.O_CREAT | os.O_RDWR)</span><br><span class="line">rf = <span class="literal">None</span></span><br><span class="line"><span class="comment"># rf = os.open(read_path, os.O_RDONLY)</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">11</span>):</span><br><span class="line">    msg = <span class="string">"msg "</span> + str(i)</span><br><span class="line">    msg = msg.encode()</span><br><span class="line">    len_send = os.write(wf, msg)</span><br><span class="line">    <span class="keyword">print</span> (<span class="string">"sent msg: %s"</span> % msg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> rf <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        rf = os.open(read_path, os.O_RDONLY)</span><br><span class="line"></span><br><span class="line">    s = os.read(rf, <span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">if</span> len(s) == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">print</span> (<span class="string">"received msg: %s"</span> % s)</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">os.write(wf, <span class="string">'exit'</span>.encode())</span><br><span class="line"></span><br><span class="line">os.close(rf)</span><br><span class="line">os.close(wf)</span><br></pre></td></tr></table></figure>
+<p><code>server.py</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os, time</span><br><span class="line"></span><br><span class="line">read_path = <span class="string">"pipe.in"</span></span><br><span class="line">write_path = <span class="string">"pipe.out"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> os.path.exists(read_path):</span><br><span class="line">    os.remove(read_path)</span><br><span class="line"><span class="keyword">if</span> os.path.exists(write_path):</span><br><span class="line">    os.remove(write_path)</span><br><span class="line"></span><br><span class="line">os.mkfifo(write_path)</span><br><span class="line">os.mkfifo(read_path)</span><br><span class="line"></span><br><span class="line">rf = os.open(read_path, os.O_RDONLY)</span><br><span class="line">wf = os.open(write_path, os.O_SYNC | os.O_CREAT | os.O_RDWR)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    s = os.read(rf, <span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">print</span> (<span class="string">"received msg: %s"</span> % s)</span><br><span class="line">    <span class="keyword">if</span> len(s) == <span class="number">0</span>:</span><br><span class="line">        time.sleep(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">"exit"</span>.encode() <span class="keyword">in</span> s:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    os.write(wf, s)</span><br><span class="line"></span><br><span class="line">os.close(rf)</span><br><span class="line">os.close(wf)</span><br></pre></td></tr></table></figure>
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">万一真的就有人扫了呢</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr-wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr-alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/blog/change-pip-mirror/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/blog/centos7-anaconda3-youcompleteme/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

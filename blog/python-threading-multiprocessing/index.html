@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>python 多线程与多进程 | 一只羊的碎碎念</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="python,">
+  
+
+  <meta name="description" content="多进程进程池阻塞与非阻塞 异步进程池（非阻塞）from multiprocessing import Pooldef test(i):    print (i)if __name__==&quot;__main__&quot;:	pool = Pool(processes=10)	for i  in xrange(500):		&apos;&apos;&apos;		For循环中执行步骤：		（1）循环遍历，将500个子进程添加到进程池（相对父进">
+<meta name="keywords" content="python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python 多线程与多进程">
+<meta property="og:url" content="https://www.holmeyoung.com/blog/python-threading-multiprocessing/index.html">
+<meta property="og:site_name" content="一只羊的碎碎念">
+<meta property="og:description" content="多进程进程池阻塞与非阻塞 异步进程池（非阻塞）from multiprocessing import Pooldef test(i):    print (i)if __name__==&quot;__main__&quot;:	pool = Pool(processes=10)	for i  in xrange(500):		&apos;&apos;&apos;		For循环中执行步骤：		（1）循环遍历，将500个子进程添加到进程池（相对父进">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-10-06T07:36:56.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python 多线程与多进程">
+<meta name="twitter:description" content="多进程进程池阻塞与非阻塞 异步进程池（非阻塞）from multiprocessing import Pooldef test(i):    print (i)if __name__==&quot;__main__&quot;:	pool = Pool(processes=10)	for i  in xrange(500):		&apos;&apos;&apos;		For循环中执行步骤：		（1）循环遍历，将500个子进程添加到进程池（相对父进">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+
+<link rel="alternate" href="/atom.xml" title="一只羊的碎碎念" type="application/atom+xml">
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#多进程"><span class="toc-text">多进程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#进程池阻塞与非阻塞"><span class="toc-text">进程池阻塞与非阻塞</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#异步进程池（非阻塞）"><span class="toc-text">异步进程池（非阻塞）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#同步进程池（阻塞）"><span class="toc-text">同步进程池（阻塞）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#REF"><span class="toc-text">REF</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多进程pool"><span class="toc-text">多进程pool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多进程pool-queue"><span class="toc-text">多进程pool queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多进程pool-map"><span class="toc-text">多进程pool.map</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程"><span class="toc-text">多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#多线程queue"><span class="toc-text">多线程queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多线程下载"><span class="toc-text">多线程下载</span></a></li></ol></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-python-threading-multiprocessing" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">python 多线程与多进程</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.08.27</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>福尔摩小阳</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/python/">python</a>
+  </span>
+
+
+
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h2><h3 id="进程池阻塞与非阻塞"><a href="#进程池阻塞与非阻塞" class="headerlink" title="进程池阻塞与非阻塞"></a>进程池阻塞与非阻塞</h3><p><span id="jump"></span></p>
+<h4 id="异步进程池（非阻塞）"><a href="#异步进程池（非阻塞）" class="headerlink" title="异步进程池（非阻塞）"></a>异步进程池（非阻塞）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(i)</span>:</span></span><br><span class="line">    <span class="keyword">print</span> (i)</span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">	pool = Pool(processes=<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i  <span class="keyword">in</span> xrange(<span class="number">500</span>):</span><br><span class="line">		<span class="string">'''</span></span><br><span class="line"><span class="string">		For循环中执行步骤：</span></span><br><span class="line"><span class="string">		（1）循环遍历，将500个子进程添加到进程池（相对父进程会阻塞）</span></span><br><span class="line"><span class="string">		（2）每次执行10个子进程，等一个子进程执行完后，立马启动新的子进程。（相对父进程不阻塞）</span></span><br><span class="line"><span class="string">		</span></span><br><span class="line"><span class="string">		apply_async为异步进程池写法。</span></span><br><span class="line"><span class="string">		异步指的是启动子进程的过程，与父进程本身的执行（print）是异步的，而For循环中往进程池添加子进程的过程，与父进程本身的执行却是同步的。</span></span><br><span class="line"><span class="string">		'''</span></span><br><span class="line">	    pool.apply_async(test, args=(i,)) <span class="comment">#维持执行的进程总数为10，当一个进程执行完后启动一个新进程.       </span></span><br><span class="line">	<span class="keyword">print</span> (<span class="string">'test'</span>)</span><br><span class="line">	pool.close()</span><br><span class="line">	pool.join()</span><br></pre></td></tr></table></figure>
+<p>执行顺序：For循环内执行了2个步骤，第一步：将500个对象放入进程池（阻塞）。第二步：同时执行10个子进程（非阻塞），有结束的就立即添加，维持10个子进程运行。（apply_async方法的会在执行完for循环的添加步骤后，直接执行后面的print语句，而apply方法会等所有进程池中的子进程运行完以后再执行后面的print语句）</p>
+<p>注意：调用join之前，先调用close或者terminate方法，否则会出错。执行完close后不会有新的进程加入到pool,join函数等待所有子进程结束。</p>
+<h4 id="同步进程池（阻塞）"><a href="#同步进程池（阻塞）" class="headerlink" title="同步进程池（阻塞）"></a>同步进程池（阻塞）</h4><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(p)</span>:</span></span><br><span class="line">       <span class="keyword">print</span> (p)</span><br><span class="line">       time.sleep(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">	pool = Pool(processes=<span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i  <span class="keyword">in</span> xrange(<span class="number">500</span>):</span><br><span class="line">	<span class="string">'''</span></span><br><span class="line"><span class="string">	实际测试发现，for循环内部执行步骤：</span></span><br><span class="line"><span class="string">	（1）遍历500个可迭代对象，往进程池放一个子进程</span></span><br><span class="line"><span class="string">	（2）执行这个子进程，等子进程执行完毕，再往进程池放一个子进程，再执行。（同时只执行一个子进程）</span></span><br><span class="line"><span class="string">	for循环执行完毕，再执行print函数。</span></span><br><span class="line"><span class="string">	'''</span></span><br><span class="line">	    pool.apply(test, args=(i,))   <span class="comment">#维持执行的进程总数为10，当一个进程执行完后启动一个新进程.</span></span><br><span class="line">	<span class="keyword">print</span> (<span class="string">'test'</span>)</span><br><span class="line">	pool.close()</span><br><span class="line">	pool.join()</span><br></pre></td></tr></table></figure>
+<p>说明：for循环内执行的步骤顺序，往进程池中添加一个子进程，执行子进程，等待执行完毕再添加一个子进程…..等500个子进程都执行完了，再执行print (‘test’)。（从结果来看，并没有多进程并发）</p>
+<h4 id="REF"><a href="#REF" class="headerlink" title="REF"></a>REF</h4><blockquote>
+<p><a href="https://thief.one/2016/11/24/Multiprocessing-Pool/" target="_blank" rel="noopener">https://thief.one/2016/11/24/Multiprocessing-Pool/</a></p>
+</blockquote>
+<h3 id="多进程pool"><a href="#多进程pool" class="headerlink" title="多进程pool"></a>多进程pool</h3><p>见 <a href="#jump">多进程.进程池阻塞与非阻塞</a></p>
+<h3 id="多进程pool-queue"><a href="#多进程pool-queue" class="headerlink" title="多进程pool queue"></a>多进程pool queue</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Manager, Pool</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_hash_queue</span><span class="params">(i, n, image_path, q_put)</span>:</span></span><br><span class="line">    <span class="comment"># print the doing process</span></span><br><span class="line">    sys.stdout.write(<span class="string">"\rLoading process: &#123;&#125;/&#123;&#125;"</span>.format(str(n-i), str(n)))</span><br><span class="line">    sys.stdout.flush()</span><br><span class="line">    <span class="string">'''Dealwith image_path here.'''</span></span><br><span class="line">    q_put.put_nowait([image_path])</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    <span class="comment"># init pool and queue</span></span><br><span class="line">    q_get = Manager().Queue()</span><br><span class="line">    q_put = Manager().Queue()</span><br><span class="line">    pool = Pool(processes = <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># put pic path into get queue: q_get</span></span><br><span class="line">    pics = os.listdir(folder)</span><br><span class="line">    <span class="keyword">for</span> pic <span class="keyword">in</span> pics:</span><br><span class="line">        path = os.path.join(folder, pic)</span><br><span class="line">        q_get.put(path)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># use multi process to get hash result and put the result into q_put</span></span><br><span class="line">    n = q_get.qsize()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            image_path = q_get.get_nowait()</span><br><span class="line">            i = q_get.qsize()</span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            pool.apply_async(get_hash_queue, (i, n, image_path, q_put, ))</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br><span class="line">    <span class="string">'''Dealwith q_put here.'''</span></span><br></pre></td></tr></table></figure>
+<h3 id="多进程pool-map"><a href="#多进程pool-map" class="headerlink" title="多进程pool.map"></a>多进程pool.map</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"><span class="keyword">from</span> multiprocessing <span class="keyword">import</span> Pool</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">pic_suffix = set()</span><br><span class="line">pic_suffix.update([<span class="string">'.BMP'</span>, <span class="string">'.DIB'</span>, <span class="string">'.JPEG'</span>, <span class="string">'.JPG'</span>, <span class="string">'.JPE'</span>, <span class="string">'.PNG'</span>, <span class="string">'.PBM'</span>, <span class="string">'.PGM'</span>, <span class="string">'.PPM'</span>, <span class="string">'.SR'</span>, <span class="string">'.RAS'</span>, <span class="string">'.TIFF'</span>, <span class="string">'.TIF'</span>, <span class="string">'.EXR'</span>, <span class="string">'.JP2'</span>])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">image_judge</span><span class="params">(image_path)</span>:</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        new_path = os.path.join(<span class="string">'./trash'</span>, os.path.split(image_path)[<span class="number">-1</span>])</span><br><span class="line">        <span class="comment"># not image</span></span><br><span class="line">        <span class="keyword">if</span> os.path.splitext(image_path)[<span class="number">-1</span>].upper() <span class="keyword">not</span> <span class="keyword">in</span> pic_suffix:</span><br><span class="line">            <span class="keyword">print</span> (<span class="string">'Not image %s'</span> % (new_path))</span><br><span class="line">            shutil.move(image_path, <span class="string">'./trash'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># image is none</span></span><br><span class="line">        image = cv2.imread(image_path)</span><br><span class="line">        <span class="keyword">if</span> image <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">print</span> (<span class="string">'Image none: %s'</span> % (new_path))</span><br><span class="line">            shutil.move(image_path, <span class="string">'./trash'</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="comment"># catch except                                            </span></span><br><span class="line">        <span class="keyword">print</span> (<span class="string">'Image error: %s'</span> % (new_path))</span><br><span class="line">        shutil.move(image_path, <span class="string">'./trash'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">entry_function</span><span class="params">(folder)</span>:</span></span><br><span class="line">    os.makedirs(<span class="string">'./trash'</span>, exist_ok=<span class="literal">True</span>)</span><br><span class="line">    pic_list = []</span><br><span class="line">    pics = os.listdir(folder)</span><br><span class="line">    <span class="keyword">for</span> pic <span class="keyword">in</span> pics:</span><br><span class="line">        pic_list.append(os.path.join(folder, pic))</span><br><span class="line">    pool = Pool()</span><br><span class="line">    pool.map(image_judge, pic_list)</span><br><span class="line">    pool.close()</span><br><span class="line">    pool.join()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    parser = argparse.ArgumentParser()</span><br><span class="line">    parser.add_argument(<span class="string">'--folder'</span>, type = str, required = <span class="literal">True</span>, help = <span class="string">'path to folder which contains the images'</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    entry_function(args.folder)</span><br></pre></td></tr></table></figure>
+<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><h3 id="多线程queue"><a href="#多线程queue" class="headerlink" title="多线程queue"></a>多线程queue</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> queue</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fetch_img_func</span><span class="params">(q)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># unblock read from queue</span></span><br><span class="line">            url = q.get_nowait() <span class="comment"># https://example.com/example.jpg</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="string">'''do something with url here'''</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    q = queue.Queue()</span><br><span class="line"></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Put something into queue here.</span></span><br><span class="line"><span class="string">    eg:</span></span><br><span class="line"><span class="string">        url = https://example.com/example.jpg</span></span><br><span class="line"><span class="string">        q.put(url)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line"></span><br><span class="line">    threads = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(args.thread):</span><br><span class="line">        thread = threading.Thread(target=fetch_img_func, args=(q, ))</span><br><span class="line">        threads.append(thread)</span><br><span class="line">        thread.start()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> threads:</span><br><span class="line">        i.join()</span><br></pre></td></tr></table></figure>
+<h3 id="多线程下载"><a href="#多线程下载" class="headerlink" title="多线程下载"></a>多线程下载</h3><p><a href="https://github.com/Holmeyoung/image-process/blob/master/image_download.py" target="_blank" rel="noopener">https://github.com/Holmeyoung/image-process/blob/master/image_download.py</a></p>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">万一真的就有人扫了呢</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr-wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr-alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/blog/hexo-gitlab-ci-github/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

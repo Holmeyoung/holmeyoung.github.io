@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>ubuntu14.04 安装 caffe | 一只羊的碎碎念</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="linux,机器学习,caffe,">
+  
+
+  <meta name="description" content="组件&amp;amp;版本 Ubuntu  14.04   CUDA  8.0   cuDNN cudnn-7.0-linux-x64-v3.0-prod.tgz   opencv 3.2   python Python 2.7.6   caffe release candidate 3    安装过程安装开发所需依赖包sudo apt-get install build-essential  sudo">
+<meta name="keywords" content="linux,机器学习,caffe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu14.04 安装 caffe">
+<meta property="og:url" content="https://www.holmeyoung.com/blog/ubuntu14-caffe/index.html">
+<meta property="og:site_name" content="一只羊的碎碎念">
+<meta property="og:description" content="组件&amp;amp;版本 Ubuntu  14.04   CUDA  8.0   cuDNN cudnn-7.0-linux-x64-v3.0-prod.tgz   opencv 3.2   python Python 2.7.6   caffe release candidate 3    安装过程安装开发所需依赖包sudo apt-get install build-essential  sudo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-10-06T07:36:56.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ubuntu14.04 安装 caffe">
+<meta name="twitter:description" content="组件&amp;amp;版本 Ubuntu  14.04   CUDA  8.0   cuDNN cudnn-7.0-linux-x64-v3.0-prod.tgz   opencv 3.2   python Python 2.7.6   caffe release candidate 3    安装过程安装开发所需依赖包sudo apt-get install build-essential  sudo">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+
+<link rel="alternate" href="/atom.xml" title="一只羊的碎碎念" type="application/atom+xml">
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#组件-amp-版本"><span class="toc-text">组件&amp;版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装过程"><span class="toc-text">安装过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装开发所需依赖包"><span class="toc-text">安装开发所需依赖包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装CUDA-8-0"><span class="toc-text">安装CUDA 8.0</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-cuDNN"><span class="toc-text">安装 cuDNN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置-CUDA-环境变量"><span class="toc-text">设置 CUDA 环境变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装cuda-samples"><span class="toc-text">安装cuda samples</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Intel-MKL，openBlas-或Atlas"><span class="toc-text">安装Intel MKL，openBlas 或Atlas</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装opencv"><span class="toc-text">安装opencv</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装python依赖库"><span class="toc-text">安装python依赖库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编译Caffe"><span class="toc-text">编译Caffe</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更换cuDNN与caffe版本"><span class="toc-text">更换cuDNN与caffe版本</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#为啥要换"><span class="toc-text">为啥要换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#确定依赖关系"><span class="toc-text">确定依赖关系</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#重装过程"><span class="toc-text">重装过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改后的组件版本"><span class="toc-text">修改后的组件版本</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一点心得"><span class="toc-text">一点心得</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-ubuntu14-caffe" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">ubuntu14.04 安装 caffe</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2018.04.30</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>福尔摩小阳</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/安装记录/">安装记录</a>
+  </span>
+
+
+
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="组件-amp-版本"><a href="#组件-amp-版本" class="headerlink" title="组件&amp;版本"></a>组件&amp;版本</h3><ul>
+<li><p><strong>Ubuntu</strong></p>
+<ul>
+<li>14.04</li>
+</ul>
+</li>
+<li><p><strong>CUDA</strong></p>
+<ul>
+<li>8.0</li>
+</ul>
+</li>
+<li><strong>cuDNN</strong><ul>
+<li>cudnn-7.0-linux-x64-<strong>v3.0</strong>-prod.tgz</li>
+</ul>
+</li>
+<li><strong>opencv</strong><ul>
+<li>3.2</li>
+</ul>
+</li>
+<li><strong>python</strong><ul>
+<li>Python 2.7.6</li>
+</ul>
+</li>
+<li><strong>caffe</strong><ul>
+<li>release candidate 3</li>
+</ul>
+</li>
+</ul>
+<h3 id="安装过程"><a href="#安装过程" class="headerlink" title="安装过程"></a>安装过程</h3><h4 id="安装开发所需依赖包"><a href="#安装开发所需依赖包" class="headerlink" title="安装开发所需依赖包"></a>安装开发所需依赖包</h4><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential  </span><br><span class="line">sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libboost-all-dev libhdf5-serial-dev libgflags-dev libgoogle-glog-dev liblmdb-dev protobuf-compiler</span><br></pre></td></tr></table></figure>
+<h4 id="安装CUDA-8-0"><a href="#安装CUDA-8-0" class="headerlink" title="安装CUDA 8.0"></a>安装CUDA 8.0</h4><ul>
+<li><p>确定 <code>GPU</code> 支持 <code>CUDA</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">lspci | grep -i nvidia</span><br></pre></td></tr></table></figure>
+<p>显示</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">02:00.0 VGA compatible controller: NVIDIA Corporation Device 1b06 (rev a1)</span><br><span class="line">02:00.1 Audio device: NVIDIA Corporation Device 10ef (rev a1)</span><br><span class="line">03:00.0 VGA compatible controller: NVIDIA Corporation Device 1b06 (rev a1)</span><br><span class="line">03:00.1 Audio device: NVIDIA Corporation Device 10ef (rev a1)</span><br><span class="line">82:00.0 VGA compatible controller: NVIDIA Corporation Device 1b06 (rev a1)</span><br><span class="line">82:00.1 Audio device: NVIDIA Corporation Device 10ef (rev a1)</span><br><span class="line">83:00.0 VGA compatible controller: NVIDIA Corporation Device 1b06 (rev a1)</span><br><span class="line">83:00.1 Audio device: NVIDIA Corporation Device 10ef (rev a1)</span><br></pre></td></tr></table></figure>
+<p>根据 <strong><a href="http://developer.nvidia.com/cuda-gpus" target="_blank" rel="noopener">http://developer.nvidia.com/cuda-gpus</a></strong> 去验证，发现支持 <code>CUDA</code></p>
+</li>
+<li><p>确定 <code>linux</code> 版本支持 <code>CUDA</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">uname -m &amp;&amp; cat /etc/*release</span><br></pre></td></tr></table></figure>
+<p>显示</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">x86_64</span><br><span class="line">DISTRIB_ID=Ubuntu</span><br><span class="line">DISTRIB_RELEASE=14.04</span><br><span class="line">DISTRIB_CODENAME=trusty</span><br><span class="line">DISTRIB_DESCRIPTION="Ubuntu 14.04.5 LTS"</span><br><span class="line">NAME="Ubuntu"</span><br><span class="line">VERSION="14.04.5 LTS, Trusty Tahr"</span><br><span class="line">ID=ubuntu</span><br><span class="line">ID_LIKE=debian</span><br><span class="line">PRETTY_NAME="Ubuntu 14.04.5 LTS"</span><br><span class="line">VERSION_ID="14.04"</span><br><span class="line">HOME_URL="http://www.ubuntu.com/"</span><br><span class="line">SUPPORT_URL="http://help.ubuntu.com/"</span><br><span class="line">BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确定系统已经安装了 <code>gcc</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gcc --version</span><br></pre></td></tr></table></figure>
+<p>显示</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gcc (Ubuntu 4.8.5-2ubuntu1~14.04.1) 4.8.5</span><br><span class="line">Copyright (C) 2015 Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the source for copying conditions.  There is NO</span><br><span class="line">warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确定系统已经安装了正确的 <code>Kernel Headers</code> 和开发包</p>
+<ul>
+<li><p>查看系统正在运行的 <code>kernel</code> 版本</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<p>显示</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">3.13.0-142-generic</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装对应的 <code>kernels header</code> 和开发包</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install linux-headers-$(uname -r)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>安装 <code>CUDA</code></p>
+<ul>
+<li>下载对应版本的cuda，从 <strong><a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">https://developer.nvidia.com/cuda-downloads</a></strong> 下载 <code>deb(network)</code> 版</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>进行 <code>md5</code> 校验</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">md5sum cuda-repo-ubuntu1404_8.0.61-1_amd64.deb</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对比相同，然后使用 <code>deb</code> 文件进行安装</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i cuda-repo-ubuntu1404_8.0.61-1_amd64.deb</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install cuda</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启，完成 <code>cuda</code> 安装</p>
+</li>
+</ul>
+<h4 id="安装-cuDNN"><a href="#安装-cuDNN" class="headerlink" title="安装 cuDNN"></a>安装 cuDNN</h4><ul>
+<li><p>从 <strong><a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/cudnn-download</a></strong> 下载 <code>cuDNN</code> ，版本为 <code>cudnn-7.0-linux-x64-v3.0-prod.tgz</code></p>
+</li>
+<li><p>安装</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar -zxvf cudnn-7.0-linux-x64-v3.0-prod.tgz</span><br><span class="line">cd cuda</span><br><span class="line">sudo cp lib64/* /usr/local/cuda/lib64/</span><br><span class="line">sudo cp include/cudnn.h /usr/local/cuda/include/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新软链接</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/cuda/lib64</span><br><span class="line">sudo rm -rf libcudnn.so libcudnn.so.7.0</span><br><span class="line">sudo ln -s libcudnn.so.7.0.64 libcudnn.so.7.0</span><br><span class="line">sudo ln -s libcudnn.so.7.0 libcudnn.so</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="设置-CUDA-环境变量"><a href="#设置-CUDA-环境变量" class="headerlink" title="设置 CUDA 环境变量"></a>设置 CUDA 环境变量</h4><ul>
+<li><p><strong>VERSION1</strong></p>
+<ul>
+<li><p>在 <code>/etc/profile</code> 中添加 <code>CUDA</code> 环境变量</p>
+</li>
+<li><p>执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/profile</span><br></pre></td></tr></table></figure>
+<p>在打开的文件中加入如下两句话</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/cuda/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda/lib64:<span class="variable">$LD_LIBRARY_PATH</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存后，使环境变量立即生效，执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><strong>VERSION2</strong></p>
+<ul>
+<li><p>在 <code>~/.bashrc</code> 中添加 <code>CUDA</code> 环境变量</p>
+</li>
+<li><p>执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>在打开的文件中加入如下两句话</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/cuda/bin:<span class="variable">$PATH</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=/usr/<span class="built_in">local</span>/cuda/lib64:<span class="variable">$LD_LIBRARY_PATH</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存后，使环境变量立即生效，执行</p>
+</li>
+</ul>
+</li>
+<li><p>我用的 <code>VERSION2</code></p>
+</li>
+</ul>
+<h4 id="安装cuda-samples"><a href="#安装cuda-samples" class="headerlink" title="安装cuda samples"></a>安装cuda samples</h4><ul>
+<li><p>进入 <code>/usr/local/cuda/samples</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/cuda/samples</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行下面的命令来 <code>build samples</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo make all -j4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>全部编译完成后，进入 <code>samples/bin/x86_64/linux/release</code> ，运行 <code>deviceQuery</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/cuda/samples/bin/x86_64/linux/release</span><br><span class="line">./deviceQuery</span><br></pre></td></tr></table></figure>
+<p>如果出现显卡信息，则驱动及显卡安装成功，结果如下</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./deviceQuery Starting...</span><br><span class="line"></span><br><span class="line"> CUDA Device Query (Runtime API) version (CUDART static linking)</span><br><span class="line"></span><br><span class="line">Detected 4 CUDA Capable device(s)</span><br><span class="line"></span><br><span class="line">Device 0: "GeForce GTX 1080 Ti"</span><br><span class="line">	.</span><br><span class="line">	.</span><br><span class="line">	.</span><br><span class="line">Device 3: "GeForce GTX 1080 Ti"</span><br><span class="line">  CUDA Driver Version / Runtime Version          9.0 / 8.0</span><br><span class="line">  CUDA Capability Major/Minor version number:    6.1</span><br><span class="line">  Total amount of global memory:                 11172 MBytes (11715084288 bytes)</span><br><span class="line">  (28) Multiprocessors, (128) CUDA Cores/MP:     3584 CUDA Cores</span><br><span class="line">  GPU Max Clock rate:                            1582 MHz (1.58 GHz)</span><br><span class="line">  Memory Clock rate:                             5505 Mhz</span><br><span class="line">  Memory Bus Width:                              352-bit</span><br><span class="line">  L2 Cache Size:                                 2883584 bytes</span><br><span class="line">  Maximum Texture Dimension Size (x,y,z)         1D=(131072), 2D=(131072, 65536), 3D=(16384, 16384, 16384)</span><br><span class="line">  Maximum Layered 1D Texture Size, (num) layers  1D=(32768), 2048 layers</span><br><span class="line">  Maximum Layered 2D Texture Size, (num) layers  2D=(32768, 32768), 2048 layers</span><br><span class="line">  Total amount of constant memory:               65536 bytes</span><br><span class="line">  Total amount of shared memory per block:       49152 bytes</span><br><span class="line">  Total number of registers available per block: 65536</span><br><span class="line">  Warp size:                                     32</span><br><span class="line">  Maximum number of threads per multiprocessor:  2048</span><br><span class="line">  Maximum number of threads per block:           1024</span><br><span class="line">  Max dimension size of a thread block (x,y,z): (1024, 1024, 64)</span><br><span class="line">  Max dimension size of a grid size    (x,y,z): (2147483647, 65535, 65535)</span><br><span class="line">  Maximum memory pitch:                          2147483647 bytes</span><br><span class="line">  Texture alignment:                             512 bytes</span><br><span class="line">  Concurrent copy and kernel execution:          Yes with 2 copy engine(s)</span><br><span class="line">  Run time limit on kernels:                     No</span><br><span class="line">  Integrated GPU sharing Host Memory:            No</span><br><span class="line">  Support host page-locked memory mapping:       Yes</span><br><span class="line">  Alignment requirement for Surfaces:            Yes</span><br><span class="line">  Device has ECC support:                        Disabled</span><br><span class="line">  Device supports Unified Addressing (UVA):      Yes</span><br><span class="line">  Device PCI Domain ID / Bus ID / location ID:   0 / 131 / 0</span><br><span class="line">  Compute Mode:</span><br><span class="line">     &lt; Default (multiple host threads can use ::cudaSetDevice() with device simultaneously) &gt;</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU0) -&gt; GeForce GTX 1080 Ti (GPU1) : Yes</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU0) -&gt; GeForce GTX 1080 Ti (GPU2) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU0) -&gt; GeForce GTX 1080 Ti (GPU3) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU1) -&gt; GeForce GTX 1080 Ti (GPU0) : Yes</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU1) -&gt; GeForce GTX 1080 Ti (GPU2) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU1) -&gt; GeForce GTX 1080 Ti (GPU3) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU2) -&gt; GeForce GTX 1080 Ti (GPU0) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU2) -&gt; GeForce GTX 1080 Ti (GPU1) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU2) -&gt; GeForce GTX 1080 Ti (GPU3) : Yes</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU3) -&gt; GeForce GTX 1080 Ti (GPU0) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU3) -&gt; GeForce GTX 1080 Ti (GPU1) : No</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Peer access from GeForce GTX 1080 Ti (GPU3) -&gt; GeForce GTX 1080 Ti (GPU2) : Yes</span></span><br><span class="line"></span><br><span class="line">deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 9.0, CUDA Runtime Version = 8.0, NumDevs = 4, Device0 = GeForce GTX 1080 Ti, Device1 = GeForce GTX 1080 Ti, Device2 = GeForce GTX 1080 Ti, Device3 = GeForce GTX 1080 Ti</span><br><span class="line">Result = PASS</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>因为我是 4 个 GPU ，所以会有多个 Device 信息</p>
+</blockquote>
+<p>安装成功！</p>
+</li>
+</ul>
+<h4 id="安装Intel-MKL，openBlas-或Atlas"><a href="#安装Intel-MKL，openBlas-或Atlas" class="headerlink" title="安装Intel MKL，openBlas 或Atlas"></a>安装Intel MKL，openBlas 或Atlas</h4><p>我选择的是 <code>Atlas</code> ，为 <code>caffe</code> 默认使用的，不要额外配置，安装命令</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libatlas-base-dev</span><br></pre></td></tr></table></figure>
+<h4 id="安装opencv"><a href="#安装opencv" class="headerlink" title="安装opencv"></a>安装opencv</h4><ul>
+<li><p>首先安装必须的包</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从 <code>opencv</code> 官网下载最新版本 <code>opencv</code> ，<code>3.2.0.zip</code></p>
+<p>解压</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">unzip 3.2.0.zip</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd  opencv-3.2.0</span><br><span class="line">mkdir release</span><br><span class="line">cd release</span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local .. -DWITH_LAPACK=OFF</span><br><span class="line">make -j4</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试</p>
+<p>因为我的 <code>GPU</code> 服务器走的别人的网关，这里显示不出来图片，也就没有测试。</p>
+<p>但是是需要测试的，自行 <code>Google</code> 吧</p>
+</li>
+</ul>
+<h4 id="安装python依赖库"><a href="#安装python依赖库" class="headerlink" title="安装python依赖库"></a>安装python依赖库</h4><ul>
+<li><p>下载 <code>caffe</code> 源码，解压后进入 <code>caffe-master</code> 下的 <code>python</code> 目录</p>
+<blockquote>
+<p>这里一定要注意当前下载的 caffe 版本是否支持自己安装的 cuDNN 版本</p>
+</blockquote>
+</li>
+<li><p>安装 <code>python-pip</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install python-pip</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行如下命令安装相关依赖</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">for req in $(cat requirements.txt); do pip install $req; done</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="编译Caffe"><a href="#编译Caffe" class="headerlink" title="编译Caffe"></a>编译Caffe</h4><ul>
+<li><p>进入 <code>caffe-master</code> 目录，复制一份 <code>Makefile.config.examples</code> </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp Makefile.config.example Makefile.config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 <code>Makefile.config</code></p>
+<p>开启对 <code>CuDNN</code> 和 <code>Opencv3</code> 的支持</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment">## Refer to http://caffe.berkeleyvision.org/installation.html</span></span><br><span class="line"><span class="comment"># Contributions simplifying and improving our build system are welcome!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cuDNN acceleration switch (uncomment to build with cuDNN).</span></span><br><span class="line">USE_CUDNN := 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># CPU-only switch (uncomment to build without GPU support).</span></span><br><span class="line"><span class="comment"># CPU_ONLY := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uncomment to disable IO dependencies and corresponding data layers</span></span><br><span class="line"><span class="comment"># USE_OPENCV := 0</span></span><br><span class="line"><span class="comment"># USE_LEVELDB := 0</span></span><br><span class="line"><span class="comment"># USE_LMDB := 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uncomment to allow MDB_NOLOCK when reading LMDB files (only if necessary)</span></span><br><span class="line"><span class="comment">#	You should not set this flag if you will be reading LMDBs with any</span></span><br><span class="line"><span class="comment">#	possibility of simultaneous read and write</span></span><br><span class="line"><span class="comment"># ALLOW_LMDB_NOLOCK := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment if you're using OpenCV 3</span></span><br><span class="line">OPENCV_VERSION := 3</span><br><span class="line"></span><br><span class="line"><span class="comment"># To customize your choice of compiler, uncomment and set the following.</span></span><br><span class="line"><span class="comment"># N.B. the default for Linux is g++ and the default for OSX is clang++</span></span><br><span class="line"><span class="comment"># CUSTOM_CXX := g++</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CUDA directory contains bin/ and lib/ directories that we need.</span></span><br><span class="line">CUDA_DIR := /usr/local/cuda</span><br><span class="line"><span class="comment"># On Ubuntu 14.04, if cuda tools are installed via</span></span><br><span class="line"><span class="comment"># "sudo apt-get install nvidia-cuda-toolkit" then use this instead:</span></span><br><span class="line"><span class="comment"># CUDA_DIR := /usr</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CUDA architecture setting: going with all of them.</span></span><br><span class="line"><span class="comment"># For CUDA &lt; 6.0, comment the *_50 lines for compatibility.</span></span><br><span class="line">CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \</span><br><span class="line">		-gencode arch=compute_20,code=sm_21 \</span><br><span class="line">		-gencode arch=compute_30,code=sm_30 \</span><br><span class="line">		-gencode arch=compute_35,code=sm_35 \</span><br><span class="line">		-gencode arch=compute_50,code=sm_50 \</span><br><span class="line">		-gencode arch=compute_50,code=compute_50</span><br><span class="line"></span><br><span class="line"><span class="comment"># BLAS choice:</span></span><br><span class="line"><span class="comment"># atlas for ATLAS (default)</span></span><br><span class="line"><span class="comment"># mkl for MKL</span></span><br><span class="line"><span class="comment"># open for OpenBlas</span></span><br><span class="line">BLAS := atlas</span><br><span class="line"><span class="comment"># Custom (MKL/ATLAS/OpenBLAS) include and lib directories.</span></span><br><span class="line"><span class="comment"># Leave commented to accept the defaults for your choice of BLAS</span></span><br><span class="line"><span class="comment"># (which should work)!</span></span><br><span class="line"><span class="comment"># BLAS_INCLUDE := /path/to/your/blas</span></span><br><span class="line"><span class="comment"># BLAS_LIB := /path/to/your/blas</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Homebrew puts openblas in a directory that is not on the standard search path</span></span><br><span class="line"><span class="comment"># BLAS_INCLUDE := $(shell brew --prefix openblas)/include</span></span><br><span class="line"><span class="comment"># BLAS_LIB := $(shell brew --prefix openblas)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># This is required only if you will compile the matlab interface.</span></span><br><span class="line"><span class="comment"># MATLAB directory should contain the mex binary in /bin.</span></span><br><span class="line"><span class="comment"># MATLAB_DIR := /usr/local</span></span><br><span class="line"><span class="comment"># MATLAB_DIR := /Applications/MATLAB_R2012b.app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># <span class="doctag">NOTE:</span> this is required only if you will compile the python interface.</span></span><br><span class="line"><span class="comment"># We need to be able to find Python.h and numpy/arrayobject.h.</span></span><br><span class="line">PYTHON_INCLUDE := /usr/<span class="keyword">include</span>/python2.7 \</span><br><span class="line">		/usr/lib/python2.7/dist-packages/numpy/core/<span class="keyword">include</span></span><br><span class="line"><span class="comment"># Anaconda Python distribution is quite popular. Include path:</span></span><br><span class="line"><span class="comment"># Verify anaconda location, sometimes it's in root.</span></span><br><span class="line"><span class="comment"># ANACONDA_HOME := $(HOME)/anaconda</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE := $(ANACONDA_HOME)/include \</span></span><br><span class="line">		<span class="comment"># $(ANACONDA_HOME)/include/python2.7 \</span></span><br><span class="line">		<span class="comment"># $(ANACONDA_HOME)/lib/python2.7/site-packages/numpy/core/include \</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to use Python 3 (default is Python 2)</span></span><br><span class="line"><span class="comment"># PYTHON_LIBRARIES := boost_python3 python3.5m</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE := /usr/include/python3.5m \</span></span><br><span class="line"><span class="comment">#                 /usr/lib/python3.5/dist-packages/numpy/core/include</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># We need to be able to find libpythonX.X.so or .dylib.</span></span><br><span class="line">PYTHON_LIB := /usr/lib</span><br><span class="line"><span class="comment"># PYTHON_LIB := $(ANACONDA_HOME)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Homebrew installs numpy in a non standard path (keg only)</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE += $(dir $(shell python -c 'import numpy.core; print(numpy.core.__file__)'))/include</span></span><br><span class="line"><span class="comment"># PYTHON_LIB += $(shell brew --prefix numpy)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to support layers written in Python (will link against Python libs)</span></span><br><span class="line"><span class="comment"># WITH_PYTHON_LAYER := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Whatever else you find you need goes here.</span></span><br><span class="line">INCLUDE_DIRS := <span class="variable">$(PYTHON_INCLUDE)</span> /usr/local/<span class="keyword">include</span></span><br><span class="line">LIBRARY_DIRS := <span class="variable">$(PYTHON_LIB)</span> /usr/local/lib /usr/lib</span><br><span class="line"></span><br><span class="line"><span class="comment"># If Homebrew is installed at a non standard location (for example your home directory) and you use it for general dependencies</span></span><br><span class="line"><span class="comment"># INCLUDE_DIRS += $(shell brew --prefix)/include</span></span><br><span class="line"><span class="comment"># LIBRARY_DIRS += $(shell brew --prefix)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to use `pkg-config` to specify OpenCV library paths.</span></span><br><span class="line"><span class="comment"># (Usually not necessary -- OpenCV libraries are normally installed in one of the above $LIBRARY_DIRS.)</span></span><br><span class="line"><span class="comment"># USE_PKG_CONFIG := 1</span></span><br><span class="line"></span><br><span class="line">BUILD_DIR := build</span><br><span class="line">DISTRIBUTE_DIR := distribute</span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment for debugging. Does not work on OSX due to https://github.com/BVLC/caffe/issues/171</span></span><br><span class="line"><span class="comment"># DEBUG := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The ID of the GPU that 'make runtest' will use to run unit tests.</span></span><br><span class="line">TEST_GPUID := 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># enable pretty build (comment to see full commands)</span></span><br><span class="line">Q ?= @</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存退出，编译</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make all -j4</span><br><span class="line">make test -j4</span><br><span class="line">make runtest -j4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[ FAILED ] 5 tests, listed below:</span><br><span class="line">[ FAILED ] CuDNNConvolutionLayerTest/0.TestSimpleConvolutionCuDNN, where TypeParam = float</span><br><span class="line">[ FAILED ] CuDNNConvolutionLayerTest/0.TestGradientCuDNN, where TypeParam = float</span><br><span class="line">[ FAILED ] CuDNNConvolutionLayerTest/0.TestGradientGroupCuDNN, where TypeParam = float</span><br><span class="line">[ FAILED ] CuDNNConvolutionLayerTest/0.TestSobelConvolutionCuDNN, where TypeParam = float</span><br><span class="line">[ FAILED ] CuDNNConvolutionLayerTest/0.TestSimpleConvolutionGroupCuDNN, where TypeParam = float</span><br></pre></td></tr></table></figure>
+<p>这个是因为我们使用的是 <code>cuDNN v3</code> 版本，而这部分只在 <code>cuDNN v4</code> 下 <code>work</code></p>
+</li>
+</ul>
+<h3 id="更换cuDNN与caffe版本"><a href="#更换cuDNN与caffe版本" class="headerlink" title="更换cuDNN与caffe版本"></a>更换cuDNN与caffe版本</h3><h4 id="为啥要换"><a href="#为啥要换" class="headerlink" title="为啥要换"></a>为啥要换</h4><p>我当然不想换！因为我老大不太满意！也没有说不满意，就是素质三连了一下</p>
+<p>都行</p>
+<p>随你</p>
+<p>都可以</p>
+<p>。。。</p>
+<h4 id="确定依赖关系"><a href="#确定依赖关系" class="headerlink" title="确定依赖关系"></a>确定依赖关系</h4><ul>
+<li><p><code>CuDNN</code> 是专门针对 <code>Deep Learning</code> 框架设计的一套 <code>GPU</code> 计算加速方案，目前支持的 <code>DL</code> 库包括 <code>Caffe</code> ，<code>ConvNet</code> ，<code>Torch7</code> 等</p>
+<p>基本原理是把 <code>lib</code> 文件加入到系统能找到的 <code>lib</code> 文件夹里， 把头文件加到系统能找到的 <code>include</code> 文件夹里就可以。这里把他们加到 <code>CUDA</code> 的文件夹下</p>
+</li>
+<li><p><code>CUDA</code> 是直接安装的、<code>OpenCV</code> 安装的时候是依赖于 <code>CUDA</code> 的、<code>cuDNN</code> 的安装就是将其 <code>lib文件加入到系统能找到的lib文件夹里， 把头文件加到系统能找到的include文件夹里，这里把他们加到CUDA的文件夹下</code></p>
+</li>
+<li><p>所以说 <code>cuDNN</code> 无关于 <code>CUDA</code> ，无关于 <code>OpenCV</code> ，它只和 <code>caffe</code> 有关系，因为 <code>caffe</code> 安装的时候要依赖它。</p>
+</li>
+</ul>
+<h4 id="重装过程"><a href="#重装过程" class="headerlink" title="重装过程"></a>重装过程</h4><ul>
+<li><p><code>cuDNN</code> 文件结构</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@Jedy:/home/jedy/deeplearning/cuda# tree -N</span><br><span class="line">.</span><br><span class="line">├── include</span><br><span class="line">│   └── cudnn.h</span><br><span class="line">└── lib64</span><br><span class="line">    ├── libcudnn.so</span><br><span class="line">    ├── libcudnn.so.5</span><br><span class="line">    ├── libcudnn.so.5.0.5</span><br><span class="line">    └── libcudnn_static.a</span><br><span class="line"></span><br><span class="line">2 directories, 5 files</span><br></pre></td></tr></table></figure>
+<p>而安装 <code>cuDNN</code> 的命令是</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar -zxvf cudnn-7.0-linux-x64-v3.0-prod.tgz </span><br><span class="line">cd cuda</span><br><span class="line">sudo cp lib64/* /usr/local/cuda/lib64/</span><br><span class="line">sudo cp include/cudnn.h /usr/local/cuda/include/</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">更新软链接</span></span><br><span class="line">cd /usr/local/cuda/lib64</span><br><span class="line">sudo rm -rf libcudnn.so libcudnn.so.7.0</span><br><span class="line">sudo ln -s libcudnn.so.7.0.64 libcudnn.so.7.0</span><br><span class="line">sudo ln -s libcudnn.so.7.0 libcudnn.so</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重装 <code>cuDNN</code> </p>
+<ul>
+<li><p>因为 <code>cuDNN</code> 只是将文件拷贝进去，所以我们只需要下载更新版本的 <code>cuDNN</code> 然后覆盖安装即可。我是打算一步到位，使用最新的 <code>caffe</code> ，又怕 <code>cuDNN</code> 向下兼容不好，所以下载了 <code>v5</code> 版本，版本为 <code>cudnn-8.0-linux-x64-v5.0-ga.tgz</code></p>
+</li>
+<li><p>进入到 <code>/usr/local/cuda/lib64</code> 中，删除旧版本的 <code>cuDNN</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/cuda/lib64</span><br><span class="line">sudo rm -rf libcudnn.so libcudnn.so.7.0 libcudnn.so.7.0.64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压新版本的 <code>cuDNN</code> 并拷贝</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tar -zxvf cudnn-8.0-linux-x64-v5.0-ga.tgz</span><br><span class="line">cd cuda</span><br><span class="line">sudo cp lib64/* /usr/local/cuda/lib64/</span><br><span class="line">sudo cp include/cudnn.h /usr/local/cuda/include/</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的 include/cudnn.h 我们并没有删除旧版本的，而是采用了覆盖安装的方式</p>
+</blockquote>
+</li>
+<li><p>更新软链接</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cd /usr/local/cuda/lib64</span><br><span class="line">sudo rm -rf libcudnn.so libcudnn.so.5</span><br><span class="line">sudo ln -s libcudnn.so.5.0.5 libcudnn.so.5</span><br><span class="line">sudo ln -s libcudnn.so.5 libcudnn.so</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>重装 <code>caffe</code></p>
+<ul>
+<li><p>在 <code>caffe</code> 的 <code>root</code> 目录执行</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make clean</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除旧版本的 <code>caffe</code> </p>
+</li>
+<li><p>下载新版本的 <code>caffe</code> ，我这里直接下载了 <code>1.0</code> 版本的 <code>caffe</code> </p>
+</li>
+<li><p>进入 <code>caffe-master</code> 目录，复制一份 <code>Makefile.config.examples</code> </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cp Makefile.config.example Makefile.config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改 <code>Makefile.config</code> ，开启 <code>CuDNN</code> 和 <code>Opencv3</code> 的支持即可，修改好的如下</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment">## Refer to http://caffe.berkeleyvision.org/installation.html</span></span><br><span class="line"><span class="comment"># Contributions simplifying and improving our build system are welcome!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cuDNN acceleration switch (uncomment to build with cuDNN).</span></span><br><span class="line">USE_CUDNN := 1</span><br><span class="line"></span><br><span class="line"><span class="comment"># CPU-only switch (uncomment to build without GPU support).</span></span><br><span class="line"><span class="comment"># CPU_ONLY := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uncomment to disable IO dependencies and corresponding data layers</span></span><br><span class="line"><span class="comment"># USE_OPENCV := 0</span></span><br><span class="line"><span class="comment"># USE_LEVELDB := 0</span></span><br><span class="line"><span class="comment"># USE_LMDB := 0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># uncomment to allow MDB_NOLOCK when reading LMDB files (only if necessary)</span></span><br><span class="line"><span class="comment">#	You should not set this flag if you will be reading LMDBs with any</span></span><br><span class="line"><span class="comment">#	possibility of simultaneous read and write</span></span><br><span class="line"><span class="comment"># ALLOW_LMDB_NOLOCK := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment if you're using OpenCV 3</span></span><br><span class="line">OPENCV_VERSION := 3</span><br><span class="line"></span><br><span class="line"><span class="comment"># To customize your choice of compiler, uncomment and set the following.</span></span><br><span class="line"><span class="comment"># N.B. the default for Linux is g++ and the default for OSX is clang++</span></span><br><span class="line"><span class="comment"># CUSTOM_CXX := g++</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CUDA directory contains bin/ and lib/ directories that we need.</span></span><br><span class="line">CUDA_DIR := /usr/local/cuda</span><br><span class="line"><span class="comment"># On Ubuntu 14.04, if cuda tools are installed via</span></span><br><span class="line"><span class="comment"># "sudo apt-get install nvidia-cuda-toolkit" then use this instead:</span></span><br><span class="line"><span class="comment"># CUDA_DIR := /usr</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CUDA architecture setting: going with all of them.</span></span><br><span class="line"><span class="comment"># For CUDA &lt; 6.0, comment the *_50 through *_61 lines for compatibility.</span></span><br><span class="line"><span class="comment"># For CUDA &lt; 8.0, comment the *_60 and *_61 lines for compatibility.</span></span><br><span class="line">CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \</span><br><span class="line">		-gencode arch=compute_20,code=sm_21 \</span><br><span class="line">		-gencode arch=compute_30,code=sm_30 \</span><br><span class="line">		-gencode arch=compute_35,code=sm_35 \</span><br><span class="line">		-gencode arch=compute_50,code=sm_50 \</span><br><span class="line">		-gencode arch=compute_52,code=sm_52 \</span><br><span class="line">		-gencode arch=compute_60,code=sm_60 \</span><br><span class="line">		-gencode arch=compute_61,code=sm_61 \</span><br><span class="line">		-gencode arch=compute_61,code=compute_61</span><br><span class="line"></span><br><span class="line"><span class="comment"># BLAS choice:</span></span><br><span class="line"><span class="comment"># atlas for ATLAS (default)</span></span><br><span class="line"><span class="comment"># mkl for MKL</span></span><br><span class="line"><span class="comment"># open for OpenBlas</span></span><br><span class="line">BLAS := atlas</span><br><span class="line"><span class="comment"># Custom (MKL/ATLAS/OpenBLAS) include and lib directories.</span></span><br><span class="line"><span class="comment"># Leave commented to accept the defaults for your choice of BLAS</span></span><br><span class="line"><span class="comment"># (which should work)!</span></span><br><span class="line"><span class="comment"># BLAS_INCLUDE := /path/to/your/blas</span></span><br><span class="line"><span class="comment"># BLAS_LIB := /path/to/your/blas</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Homebrew puts openblas in a directory that is not on the standard search path</span></span><br><span class="line"><span class="comment"># BLAS_INCLUDE := $(shell brew --prefix openblas)/include</span></span><br><span class="line"><span class="comment"># BLAS_LIB := $(shell brew --prefix openblas)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># This is required only if you will compile the matlab interface.</span></span><br><span class="line"><span class="comment"># MATLAB directory should contain the mex binary in /bin.</span></span><br><span class="line"><span class="comment"># MATLAB_DIR := /usr/local</span></span><br><span class="line"><span class="comment"># MATLAB_DIR := /Applications/MATLAB_R2012b.app</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># <span class="doctag">NOTE:</span> this is required only if you will compile the python interface.</span></span><br><span class="line"><span class="comment"># We need to be able to find Python.h and numpy/arrayobject.h.</span></span><br><span class="line">PYTHON_INCLUDE := /usr/<span class="keyword">include</span>/python2.7 \</span><br><span class="line">		/usr/lib/python2.7/dist-packages/numpy/core/<span class="keyword">include</span></span><br><span class="line"><span class="comment"># Anaconda Python distribution is quite popular. Include path:</span></span><br><span class="line"><span class="comment"># Verify anaconda location, sometimes it's in root.</span></span><br><span class="line"><span class="comment"># ANACONDA_HOME := $(HOME)/anaconda</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE := $(ANACONDA_HOME)/include \</span></span><br><span class="line">		<span class="comment"># $(ANACONDA_HOME)/include/python2.7 \</span></span><br><span class="line">		<span class="comment"># $(ANACONDA_HOME)/lib/python2.7/site-packages/numpy/core/include</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to use Python 3 (default is Python 2)</span></span><br><span class="line"><span class="comment"># PYTHON_LIBRARIES := boost_python3 python3.5m</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE := /usr/include/python3.5m \</span></span><br><span class="line"><span class="comment">#                 /usr/lib/python3.5/dist-packages/numpy/core/include</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># We need to be able to find libpythonX.X.so or .dylib.</span></span><br><span class="line">PYTHON_LIB := /usr/lib</span><br><span class="line"><span class="comment"># PYTHON_LIB := $(ANACONDA_HOME)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Homebrew installs numpy in a non standard path (keg only)</span></span><br><span class="line"><span class="comment"># PYTHON_INCLUDE += $(dir $(shell python -c 'import numpy.core; print(numpy.core.__file__)'))/include</span></span><br><span class="line"><span class="comment"># PYTHON_LIB += $(shell brew --prefix numpy)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to support layers written in Python (will link against Python libs)</span></span><br><span class="line"><span class="comment"># WITH_PYTHON_LAYER := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Whatever else you find you need goes here.</span></span><br><span class="line">INCLUDE_DIRS := <span class="variable">$(PYTHON_INCLUDE)</span> /usr/local/<span class="keyword">include</span></span><br><span class="line">LIBRARY_DIRS := <span class="variable">$(PYTHON_LIB)</span> /usr/local/lib /usr/lib</span><br><span class="line"></span><br><span class="line"><span class="comment"># If Homebrew is installed at a non standard location (for example your home directory) and you use it for general dependencies</span></span><br><span class="line"><span class="comment"># INCLUDE_DIRS += $(shell brew --prefix)/include</span></span><br><span class="line"><span class="comment"># LIBRARY_DIRS += $(shell brew --prefix)/lib</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># NCCL acceleration switch (uncomment to build with NCCL)</span></span><br><span class="line"><span class="comment"># https://github.com/NVIDIA/nccl (last tested version: v1.2.3-1+cuda8.0)</span></span><br><span class="line"><span class="comment"># USE_NCCL := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to use `pkg-config` to specify OpenCV library paths.</span></span><br><span class="line"><span class="comment"># (Usually not necessary -- OpenCV libraries are normally installed in one of the above $LIBRARY_DIRS.)</span></span><br><span class="line"><span class="comment"># USE_PKG_CONFIG := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># N.B. both build and distribute dirs are cleared on `make clean`</span></span><br><span class="line">BUILD_DIR := build</span><br><span class="line">DISTRIBUTE_DIR := distribute</span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment for debugging. Does not work on OSX due to https://github.com/BVLC/caffe/issues/171</span></span><br><span class="line"><span class="comment"># DEBUG := 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The ID of the GPU that 'make runtest' will use to run unit tests.</span></span><br><span class="line">TEST_GPUID := 0</span><br><span class="line"></span><br><span class="line"><span class="comment"># enable pretty build (comment to see full commands)</span></span><br><span class="line">Q ?= @</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存退出，编译</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make all -j4</span><br><span class="line">make test -j4</span><br><span class="line">make runtest -j4</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>没有报错，成功</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">[----------] Global test environment tear-down</span><br><span class="line">[==========] 2101 tests from 277 test cases ran. (371248 ms total)</span><br><span class="line">[  PASSED  ] 2101 tests.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="修改后的组件版本"><a href="#修改后的组件版本" class="headerlink" title="修改后的组件版本"></a>修改后的组件版本</h4><ul>
+<li><strong>Ubuntu</strong><ul>
+<li>14.04</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><strong>CUDA</strong><ul>
+<li>8.0</li>
+</ul>
+</li>
+<li><strong>cuDNN</strong><ul>
+<li>cudnn-8.0-linux-x64-v5.0-ga.tgz</li>
+</ul>
+</li>
+<li><strong>opencv</strong><ul>
+<li>3.2</li>
+</ul>
+</li>
+<li><strong>python</strong><ul>
+<li>Python 2.7.6</li>
+</ul>
+</li>
+<li><strong>caffe</strong><ul>
+<li>1.0</li>
+</ul>
+</li>
+</ul>
+<h3 id="一点心得"><a href="#一点心得" class="headerlink" title="一点心得"></a>一点心得</h3><ul>
+<li><p>make 编译的时候可以通过</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">make -j4</span><br></pre></td></tr></table></figure>
+<p>指令指定多线程编译，可以很大程度加快编译速度。具体可以开多少看自己机器配置</p>
+</li>
+<li><p>看好OpenCV支持的CUDA版本</p>
+</li>
+<li><p>看好caffe支持的cuDNN版本</p>
+</li>
+<li><p>每个人硬件、环境的不同都会导致踩到不同的坑。这个就多 Google 吧！</p>
+</li>
+</ul>
+<blockquote>
+<p>部分参考 <a href="http://www.cnblogs.com/wm123/p/5385940.html" target="_blank" rel="noopener"><strong>Ubuntu 14.04上安装caffe</strong></a></p>
+</blockquote>
+
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">万一真的就有人扫了呢</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr-wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr-alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/blog/git-summary/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/blog/change-pip-mirror/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>centos7 配置 redis 主从集群 + 哨兵模式 | 一只羊的碎碎念</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="linux,redis,">
+  
+
+  <meta name="description" content="搭建环境三台CentOS7服务器 实现目标在3台CentOS7服务器上搭建一主两从的redis集群，且配置哨兵模式，当master宕机，另外两个slave会选举出一个新的master，实现高可用。    master slave0 slave1     ip0 ip1 ip2    准备工作安装额外的软件包$ yum install epel-release 安装 redis$ yum insta">
+<meta name="keywords" content="linux,redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="centos7 配置 redis 主从集群 + 哨兵模式">
+<meta property="og:url" content="https://www.holmeyoung.com/blog/centos7-redis-cluster-sentinel/index.html">
+<meta property="og:site_name" content="一只羊的碎碎念">
+<meta property="og:description" content="搭建环境三台CentOS7服务器 实现目标在3台CentOS7服务器上搭建一主两从的redis集群，且配置哨兵模式，当master宕机，另外两个slave会选举出一个新的master，实现高可用。    master slave0 slave1     ip0 ip1 ip2    准备工作安装额外的软件包$ yum install epel-release 安装 redis$ yum insta">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-10-06T07:36:56.304Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="centos7 配置 redis 主从集群 + 哨兵模式">
+<meta name="twitter:description" content="搭建环境三台CentOS7服务器 实现目标在3台CentOS7服务器上搭建一主两从的redis集群，且配置哨兵模式，当master宕机，另外两个slave会选举出一个新的master，实现高可用。    master slave0 slave1     ip0 ip1 ip2    准备工作安装额外的软件包$ yum install epel-release 安装 redis$ yum insta">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    <link rel="stylesheet" href="/css/personal-style.css">
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+
+<link rel="alternate" href="/atom.xml" title="一只羊的碎碎念" type="application/atom+xml">
+</head>
+</html>
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/link/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            友链
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/atom.xml"
+            rel="noopener noreferrer"
+            target="_blank"
+            >
+            RSS
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/search/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#搭建环境"><span class="toc-text">搭建环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现目标"><span class="toc-text">实现目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装额外的软件包"><span class="toc-text">安装额外的软件包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-redis"><span class="toc-text">安装 redis</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置一主两从"><span class="toc-text">配置一主两从</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#master（ip0）"><span class="toc-text">master（ip0）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#slave（ip1、ip2）"><span class="toc-text">slave（ip1、ip2）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置哨兵模式"><span class="toc-text">配置哨兵模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置备份"><span class="toc-text">配置备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#启动-1"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试-1"><span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-text">Reference</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DONE"><span class="toc-text">DONE</span></a></li></ol>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-centos7-redis-cluster-sentinel" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">centos7 配置 redis 主从集群 + 哨兵模式</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2019.04.11</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>福尔摩小阳</span>
+        </span>
+      
+
+      
+  <span class="article-category">
+    <i class="icon-list"></i>
+    <a class="article-category-link" href="/categories/安装记录/">安装记录</a>
+  </span>
+
+
+
+      
+
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h2 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h2><p>三台CentOS7服务器</p>
+<h2 id="实现目标"><a href="#实现目标" class="headerlink" title="实现目标"></a>实现目标</h2><p>在3台CentOS7服务器上搭建一主两从的redis集群，且配置哨兵模式，当master宕机，另外两个slave会选举出一个新的master，实现高可用。</p>
+<table>
+<thead>
+<tr>
+<th>master</th>
+<th>slave0</th>
+<th>slave1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ip0</td>
+<td>ip1</td>
+<td>ip2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><h3 id="安装额外的软件包"><a href="#安装额外的软件包" class="headerlink" title="安装额外的软件包"></a>安装额外的软件包</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ yum install epel-release</span><br></pre></td></tr></table></figure>
+<h3 id="安装-redis"><a href="#安装-redis" class="headerlink" title="安装 redis"></a>安装 redis</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> yum install redis</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置一主两从"><a href="#配置一主两从" class="headerlink" title="配置一主两从"></a>配置一主两从</h2><h3 id="master（ip0）"><a href="#master（ip0）" class="headerlink" title="master（ip0）"></a>master（ip0）</h3><ul>
+<li><p>修改 <code>/etc/redis.conf</code></p>
+  <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">$ vim /etc/redis.conf</span><br></pre></td></tr></table></figure>
+<p>  找到一下内容并修改</p>
+  <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 将 127.0.0.1 修改为本机的IP（ip0）</span></span><br><span class="line"><span class="built_in">bind</span> ip0</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 no 改为 yes，以守护进程的形式运行</span></span><br><span class="line">daemonize yes</span><br></pre></td></tr></table></figure>
+<p>  修改完毕</p>
+</li>
+</ul>
+<ul>
+<li><p>测试</p>
+<p>  登录 <code>redis</code>  </p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br></pre></td></tr></table></figure>
+<p>  列出所有 <code>kyes *</code></p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br><span class="line">ip0:6379&gt; keys *</span><br></pre></td></tr></table></figure>
+<p>  设置 <code>key</code> <code>value</code></p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br><span class="line">ip0:6379&gt; set name holmeyoung</span><br></pre></td></tr></table></figure>
+<p>  得到 <code>key</code> 的 <code>value</code></p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br><span class="line">ip0:6379&gt; get name</span><br></pre></td></tr></table></figure>
+<p>  删除 <code>key</code> </p>
+  <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br><span class="line">ip0:6379&gt; del name</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="slave（ip1、ip2）"><a href="#slave（ip1、ip2）" class="headerlink" title="slave（ip1、ip2）"></a>slave（ip1、ip2）</h3><ul>
+<li><p>修改 <code>/etc/redis.conf</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vim /etc/redis.conf</span></span><br></pre></td></tr></table></figure>
+<p>找到一下内容并修改</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 将 127.0.0.1 修改为本机的IP（eg：ip1）</span></span><br><span class="line"><span class="built_in">bind</span> ip1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将 no 改为 yes，以守护进程的形式运行</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line"><span class="comment"># 增加该 slave节点 所要从的 master节点 的 ip/port</span></span><br><span class="line"><span class="comment"># 找到 # slaveof &lt;masterip&gt; &lt;masterport&gt;</span></span><br><span class="line"><span class="comment"># 在下面增加一行</span></span><br><span class="line">slaveof ip0 6379</span><br></pre></td></tr></table></figure>
+<p>修改完毕</p>
+</li>
+</ul>
+<ul>
+<li><p>测试</p>
+<p>同 <code>master</code> </p>
+</li>
+</ul>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p>分别运行三台机器的 <code>redis-server</code> </p>
+<blockquote>
+<p>先运行 <code>master</code> </p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-server /etc/redis.conf</span></span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li><p>在 <code>master</code> 上</p>
+<p>连接 <code>redis</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip0</span></span><br></pre></td></tr></table></figure>
+<p>打印信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ip0:6379&gt; info Replication</span><br><span class="line"><span class="meta">#</span><span class="bash"> Replication</span></span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=ip1,port=6379,state=online,offset=3242902,lag=1</span><br><span class="line">slave1:ip=ip2,port=6379,state=online,offset=3243317,lag=0</span><br><span class="line">master_repl_offset:3243317</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:2194742</span><br><span class="line">repl_backlog_histlen:1048576</span><br></pre></td></tr></table></figure>
+<p>写入一组 <code>key</code> <code>value</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ip0:6379&gt; set name holmeyoung</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>在 <code>slave0</code> 上</p>
+<p>连接 <code>redis</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip1</span></span><br></pre></td></tr></table></figure>
+<p>读取数值</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ip1:6379&gt; get name</span><br></pre></td></tr></table></figure>
+<p>输出 <code>holmeyoung</code> 则正常</p>
+<blockquote>
+<p>因为 <code>slave</code> 只有读权限，所以是不可以写入数据的</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li><p>在 <code>slave1</code> 上</p>
+<p>同 <code>slave0</code> </p>
+</li>
+</ul>
+<h2 id="配置哨兵模式"><a href="#配置哨兵模式" class="headerlink" title="配置哨兵模式"></a>配置哨兵模式</h2><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><blockquote>
+<p>三台机器配置相同</p>
+</blockquote>
+<p>修改 <code>/etc/redis-sentinel.conf</code></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> vim /etc/redis-sentinel.conf</span></span><br></pre></td></tr></table></figure>
+<p>增改以下内容</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 保护模式，这个必须选择no，不然当master宕机，slave无法自动转换为master</span></span><br><span class="line">protected-mode no</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 以守护进程运行</span></span><br><span class="line">daemonize yes</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 日志文件位置</span></span><br><span class="line">logfile "/var/log/redis/sentinel.log"</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 哨兵监控的master，主从配置一样，这里只用输入redis主节点的ip/port和法定人数</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 其中2是quorum，即权重，代表至少需要两个Sentinel节点认为主节点主观下线，才可判定主节点为客观下线。一般建议将其设置为Sentinel节点的一半加1。不仅如此，quorum还与Sentinel节点的领导者选举有关。为了选出Sentinel的领导者，至少需要max(quorum, num(sentinels) / 2 + 1)个Sentinel节点参与选举。</span></span><br><span class="line">sentinel monitor mymaster ip0 6379 2</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> master或slave多长时间（默认30秒）不能使用后标记为s_down状态</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 每个Sentinel节点都要通过定期发送ping命令来判断Redis节点和其余Sentinel节点是否可达。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果在指定的时间内，没有收到主节点的有效回复，则判断其为主观下线。需要注意的是，该参数不仅用来判断主节点状态，同样也用来判断该主节点下面的从节点及其它Sentinel的状态。其默认值为30s。</span></span><br><span class="line">sentinel down-after-milliseconds mymaster 3000</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 在failover期间，允许多少个slave同时指向新的主节点。如果numslaves设置较大的话，虽然复制操作并不会阻塞主节点，但多个节点同时指向新的主节点，会增加主节点的网络和磁盘IO负载</span></span><br><span class="line">sentinel parallel-syncs mymaster 1</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 定义故障切换超时时间。默认180000，单位秒，即3min。需要注意的是，该时间不是总的故障切换的时间，而是适用于故障切换的多个场景。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 若sentinel在该配置值内未能完成failover操作（即故障时master/slave自动切换），则认为本次failover失败</span></span><br><span class="line">sentinel failover-timeout mymaster 10000</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意 <code>sentinel monitor mymaster ip0 6379 2</code> 里面的 <code>ip0</code> 为 <code>master</code> 的IP</p>
+</blockquote>
+<h3 id="配置备份"><a href="#配置备份" class="headerlink" title="配置备份"></a>配置备份</h3><blockquote>
+<p>将配置文件 <code>/etc/redis.conf</code> 以及 <code>/etc/redis-sentinel.conf</code> 备份一份，因为当 <code>master</code> 宕机并唤醒哨兵模式后，系统会重写配置文件</p>
+</blockquote>
+<h3 id="启动-1"><a href="#启动-1" class="headerlink" title="启动"></a>启动</h3><p>分别运行三台机器的 <code>redis-sentinel</code> </p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-sentinel /etc/redis-sentinel.conf</span></span><br></pre></td></tr></table></figure>
+<h3 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h3><p>在 <code>master</code> 上杀死 <code>redis</code> 进程</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> pkill redis</span></span><br></pre></td></tr></table></figure>
+<p>随便登录一个 <code>slave</code> 服务器</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> redis-cli -h ip1</span></span><br></pre></td></tr></table></figure>
+<p>打印信息</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ip0:6379&gt; info Replication</span><br></pre></td></tr></table></figure>
+<p>会发现此时的 <code>master</code> 以及 <code>slave</code> 发生了更改</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://www.cnblogs.com/ddrsql/p/6686282.html" target="_blank" rel="noopener">CentOS7 配置 Redis Sentinel 主从集群配置</a></p>
+<p><a href="https://www.centos.bz/2017/07/centos7-redis-master-slave-replicate/" target="_blank" rel="noopener">CentOS7 配置 Redis 主从复制方法</a></p>
+<h2 id="DONE"><a href="#DONE" class="headerlink" title="DONE"></a>DONE</h2>
+    
+  </div>
+
+</article>
+
+
+   
+  <div class="text-center donation">
+    <div class="inner-donation">
+      <span class="btn-donation">支持一下</span>
+      <div class="donation-body">
+        <div class="tip text-center">万一真的就有人扫了呢</div>
+        <ul>
+        
+          <li class="item">
+            
+              <span>微信扫一扫</span>
+            
+            <img src="/images/qr-wechat.png" alt="">
+          </li>
+        
+          <li class="item">
+            
+              <span>支付宝扫一扫</span>
+            
+            <img src="/images/qr-alipay.png" alt="">
+          </li>
+        
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/blog/centos7-p40-cuda10.0-cudnn10.0/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="show pull-right" href="/blog/hexo-gitlab-ci-github/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/link/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              友链
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/atom.xml"
+              rel="noopener noreferrer"
+              target="_blank"
+              >
+              RSS
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/search/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              搜索
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+</body>
+</html>
